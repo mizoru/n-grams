@@ -10,8 +10,8 @@ args = parser.parse_args()
 
 model = N_grams.load(args.path)
 
-f, s = args.prefix.split()[-2:]
-print(f,s,end=' ')
+prompt = args.prefix.split()[-2:]
+print(args.prefix, end=' ')
 for i in range(args.length):
-    f, s = s, model.predict(f, s)
-    print(s, end=' ')
+    prompt = prompt[-1], model.predict(*prompt)
+    print(prompt[-1], end=' ')
