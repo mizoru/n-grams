@@ -5,6 +5,11 @@ import numpy as np
 
 
 class N_grams():
+    """
+    Trigram model class that contains methods for prepocessing,
+    training, prediction, saving and loading.
+    """
+
     def __init__(self, weights: dict = None):
         self.bigrams = {}
         if weights is None:
