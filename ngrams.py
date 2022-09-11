@@ -20,7 +20,7 @@ class N_grams():
     def tokenize(self, text: str) -> list:
         """Process the text into a list of tokens."""
         processed = text.lower()
-        processed = [t.strip('….,-!:“„”—«»?()""') for t in processed.split()]
+        processed = [t.strip('….,-!:;“„”—–«»?()""') for t in processed.split()]
         processed = [t for t in processed if t]
         return processed
 
@@ -96,8 +96,9 @@ class N_grams():
         with open(path, 'wb') as file:
             pickle.dump(self.weights, file)
 
-    def load(path: Path):
+    @classmethod
+    def load(cls, path: Path):
         """Create a model with weights from path."""
         with open(path, 'rb') as file:
             weights = pickle.load(file)
-        return N_grams(weights)
+        return cls(weights)
