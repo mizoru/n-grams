@@ -13,19 +13,14 @@ class N_grams():
             self.weights = weights
 
     def tokenize(self, text: str) -> list:
+        """Process the text into a list of tokens."""
         processed = text.lower()
         processed = [t.strip('….,-!:“„”—«»?()""') for t in processed.split()]
         processed = [t for t in processed if t]
         return processed
 
-    def build_bigrams(self):
-        for k, v in self.weights.keys():
-            if k in self.bigrams:
-                self.bigrams[k].append(v)
-            else:
-                self.bigrams[k] = [v]
-
     def fit_processed(self, processed: list, preprev: str, prev: str):
+        """Train on a list of tokens."""
         for i in range(len(processed)):
             current = processed[i]
             if (preprev, prev) not in self.weights:
@@ -41,6 +36,9 @@ class N_grams():
         return preprev, prev
 
     def fit(self, path: str = None):
+        """
+        Train trigrams on a directory of text files or an input string.
+        """
         if not path:
             text = input('Enter the text to train on: ')
             text = self.tokenize(text)
@@ -60,7 +58,18 @@ class N_grams():
             probs = probs / probs.sum()
             w[-1] = probs
 
+    def build_bigrams(self):
+        """
+        Populate self.bigrams from self.weights for one-word prediction.
+        """
+        for k, v in self.weights.keys():
+            if k in self.bigrams:
+                self.bigrams[k].append(v)
+            else:
+                self.bigrams[k] = [v]
+
     def predict(self, first: str = None, second: str = None) -> str:
+        """Predict the next word for a 0-to-2-word prompt"""
         if first is None and second is None:
             first, second = '<eos>', '<bos>'
         elif second is None:
@@ -78,10 +87,12 @@ class N_grams():
                 return np.random.choice(list(self.bigrams.keys()), 1)[0]
 
     def save(self, path: Path):
+        """Save the weights of the model to path."""
         with open(path, 'wb') as file:
             pickle.dump(self.weights, file)
 
-    def load(path: Path) -> N_grams:
+    def load(path: Path):
+        """Create a model with weights from path."""
         with open(path, 'rb') as file:
             weights = pickle.load(file)
         return N_grams(weights)
